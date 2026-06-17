@@ -1,0 +1,174 @@
+<UserControl x:Class="NotesApp.Views.NoteEditorView"
+             x:Name="EditorControl"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:models="using:NotesApp.Models">
+    <Grid RowSpacing="14">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+
+            <TextBox x:Name="TitleBox"
+                     Grid.Row="0"
+                     Header="{x:Bind Strings.Title}"
+                     Text="{x:Bind ViewModel.Title, Mode=TwoWay}"
+                     PlaceholderText="{x:Bind Strings.NoteTitle}"/>
+
+            <!--
+                Основные действия находятся сразу под названием: пользователь
+                видит их до длинного текста заметки и не ищет по всей панели.
+                Кнопки отключены, пока заметка не создана или не выбрана.
+            -->
+            <StackPanel Grid.Row="1" Orientation="Horizontal" Spacing="8">
+                <Button Content="{x:Bind Strings.Delete}"
+                        Command="{x:Bind ViewModel.DeleteCurrentNoteCommand}"
+                        IsEnabled="{x:Bind ViewModel.HasCurrentNote, Mode=OneWay}"/>
+                <Button Content="{x:Bind Strings.Save}"
+                        Command="{x:Bind ViewModel.SaveNoteCommand}"
+                        IsEnabled="{x:Bind ViewModel.HasCurrentNote, Mode=OneWay}"/>
+                <Button Content="{x:Bind Strings.AddTag}"
+                        Command="{x:Bind ViewModel.AddTagCommand}"
+                        IsEnabled="{x:Bind ViewModel.HasCurrentNote, Mode=OneWay}"/>
+            </StackPanel>
+
+            <!--
+                Прикрепленные теги остаются видимыми постоянно. Нажатие на
+                плашку удаляет только связь с заметкой, но не сам тег.
+            -->
+            <ItemsControl Grid.Row="2" ItemsSource="{x:Bind ViewModel.NoteTags}">
+                <ItemsControl.ItemsPanel>
+                    <ItemsPanelTemplate>
+                        <ItemsWrapGrid Orientation="Horizontal"/>
+                    </ItemsPanelTemplate>
+                </ItemsControl.ItemsPanel>
+                <ItemsControl.ItemTemplate>
+                    <DataTemplate x:DataType="models:Tag">
+                        <Button Content="{x:Bind Name}"
+                                Style="{StaticResource TagChipButtonStyle}"
+                                Background="{x:Bind ColorHex, Converter={StaticResource TagColorBrushConverter}}"
+                                Foreground="{x:Bind ColorHex, Converter={StaticResource TagForegroundBrushConverter}}"
+                                BorderBrush="{x:Bind ColorHex, Converter={StaticResource TagColorBrushConverter}}"
+                                Command="{Binding ElementName=EditorControl, Path=DataContext.RemoveTagCommand}"
+                                CommandParameter="{Binding}"/>
+                    </DataTemplate>
+                </ItemsControl.ItemTemplate>
+            </ItemsControl>
+
+            <TextBlock Grid.Row="3"
+                       Text="{x:Bind Strings.Content}"
+                       Style="{StaticResource SubtitleTextBlockStyle}"
+                       Margin="0,2,0,0"/>
+            <Grid x:Name="ContentEditorGrid"
+                  Grid.Row="4"
+                  MinHeight="180"
+                  ColumnSpacing="4">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="12"/>
+                </Grid.ColumnDefinitions>
+
+                <RichEditBox x:Name="ContentBox"
+                             TextWrapping="Wrap"
+                             BorderThickness="0"
+                             BorderBrush="Transparent"
+                             Background="Transparent"
+                             Padding="0,8,8,8"
+                             ScrollViewer.VerticalScrollBarVisibility="Hidden"
+                             ScrollViewer.VerticalScrollMode="Enabled"
+                             ScrollViewer.HorizontalScrollBarVisibility="Disabled"
+                             Loaded="ContentBox_Loaded"
+                             TextChanged="ContentBox_TextChanged"
+                             DoubleTapped="ContentBox_DoubleTapped"
+                             PlaceholderText="{x:Bind Strings.WriteNoteHere}">
+                    <RichEditBox.ContextFlyout>
+                        <MenuFlyout x:Name="ContentFormattingFlyout"
+                                    Opening="ContentFormattingFlyout_Opening">
+                            <MenuFlyoutSubItem Text="{x:Bind Strings.Formatting}">
+                                <MenuFlyoutSubItem Text="{x:Bind Strings.FontFamily}">
+                                    <MenuFlyoutItem Text="Segoe UI" Tag="Segoe UI" Click="ApplyFontFamily_Click"/>
+                                    <MenuFlyoutItem Text="Arial" Tag="Arial" Click="ApplyFontFamily_Click"/>
+                                    <MenuFlyoutItem Text="Calibri" Tag="Calibri" Click="ApplyFontFamily_Click"/>
+                                    <MenuFlyoutItem Text="Consolas" Tag="Consolas" Click="ApplyFontFamily_Click"/>
+                                </MenuFlyoutSubItem>
+                                <MenuFlyoutSubItem Text="{x:Bind Strings.FontSize}">
+                                    <MenuFlyoutItem Text="12" Tag="12" Click="ApplyFontSize_Click"/>
+                                    <MenuFlyoutItem Text="14" Tag="14" Click="ApplyFontSize_Click"/>
+                                    <MenuFlyoutItem Text="18" Tag="18" Click="ApplyFontSize_Click"/>
+                                    <MenuFlyoutItem Text="24" Tag="24" Click="ApplyFontSize_Click"/>
+                                    <MenuFlyoutItem Text="32" Tag="32" Click="ApplyFontSize_Click"/>
+                                </MenuFlyoutSubItem>
+                                <MenuFlyoutSeparator/>
+                                <MenuFlyoutItem Text="{x:Bind Strings.Bold}" Click="ApplyBold_Click"/>
+                                <MenuFlyoutItem Text="{x:Bind Strings.Italic}" Click="ApplyItalic_Click"/>
+                                <MenuFlyoutSeparator/>
+                                <MenuFlyoutSubItem Text="{x:Bind Strings.TextCase}">
+                                    <MenuFlyoutItem Text="{x:Bind Strings.Uppercase}" Click="ApplyUppercase_Click"/>
+                                    <MenuFlyoutItem Text="{x:Bind Strings.Lowercase}" Click="ApplyLowercase_Click"/>
+                                    <MenuFlyoutItem Text="{x:Bind Strings.Heading}" Click="ApplyHeading_Click"/>
+                                </MenuFlyoutSubItem>
+                            </MenuFlyoutSubItem>
+                            <MenuFlyoutSeparator/>
+                            <MenuFlyoutSubItem Text="{x:Bind Strings.Blocks}">
+                                <MenuFlyoutItem Text="{x:Bind Strings.Table}" Click="InsertTable_Click"/>
+                                <MenuFlyoutItem Text="{x:Bind Strings.Checklist}" Click="InsertChecklist_Click"/>
+                                <MenuFlyoutItem Text="{x:Bind Strings.ToggleChecklistItem}" Click="ToggleChecklistItem_Click"/>
+                            </MenuFlyoutSubItem>
+                            <MenuFlyoutSubItem Text="{x:Bind Strings.InternalLink}">
+                                <MenuFlyoutItem Text="{x:Bind Strings.InsertInternalLink}" Click="InsertInternalLink_Click"/>
+                                <MenuFlyoutItem x:Name="OpenInternalLinkItem"
+                                                Text="{x:Bind Strings.OpenInternalLink}"
+                                                Click="OpenInternalLink_Click"/>
+                            </MenuFlyoutSubItem>
+                        </MenuFlyout>
+                    </RichEditBox.ContextFlyout>
+                </RichEditBox>
+
+                <!--
+                    Полоса вынесена из шаблона TextBox, чтобы Windows не
+                    скрывала ее настройкой автоматического скрытия. Трек
+                    принимает события мыши сам, поэтому пользователь может
+                    перетаскивать видимый ползунок, а не только крутить колесо.
+                -->
+                <Border Grid.Column="1"
+                        x:Name="ContentScrollTrack"
+                        Opacity="0.26"
+                        Width="12"
+                        CornerRadius="6"
+                        Background="{ThemeResource AppScrollBarTrackBrush}"
+                        PointerEntered="ContentScrollTrack_PointerEntered"
+                        PointerExited="ContentScrollTrack_PointerExited"
+                        PointerPressed="ContentScrollTrack_PointerPressed"
+                        PointerMoved="ContentScrollTrack_PointerMoved"
+                        PointerReleased="ContentScrollTrack_PointerReleased"
+                        PointerCanceled="ContentScrollTrack_PointerReleased"
+                        PointerCaptureLost="ContentScrollTrack_PointerCaptureLost">
+                    <Grid>
+                        <Border x:Name="ContentScrollThumb"
+                                Opacity="0.58"
+                                Width="8"
+                                Height="40"
+                                Margin="2"
+                                VerticalAlignment="Top"
+                                CornerRadius="4"
+                                IsHitTestVisible="False"
+                                Background="{ThemeResource AppScrollBarThumbBrush}">
+                            <Border.RenderTransform>
+                                <TranslateTransform x:Name="ContentThumbTransform"/>
+                            </Border.RenderTransform>
+                        </Border>
+                        <ScrollBar x:Name="ContentScrollBar"
+                                   Opacity="0"
+                                   IsHitTestVisible="False"
+                                   Orientation="Vertical"
+                                   Minimum="0"
+                                   SmallChange="24"
+                                   Scroll="ContentScrollBar_Scroll"/>
+                    </Grid>
+                </Border>
+            </Grid>
+    </Grid>
+</UserControl>

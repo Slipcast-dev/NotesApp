@@ -1,0 +1,49 @@
+<UserControl x:Class="NotesApp.Views.TagsListView"
+             x:Name="TagsView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:models="using:NotesApp.Models">
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+
+        <ListView x:Name="TagsList"
+                  ItemsSource="{x:Bind ViewModel.Tags}"
+                  SelectedItem="{x:Bind ViewModel.SelectedTag, Mode=TwoWay}"
+                  SelectionMode="Single">
+            <ListView.ItemTemplate>
+                <DataTemplate x:DataType="models:Tag">
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition Width="Auto"/>
+                        </Grid.ColumnDefinitions>
+
+                        <Button Content="{x:Bind Name}"
+                                Style="{StaticResource TagChipButtonStyle}"
+                                Background="{x:Bind ColorHex, Converter={StaticResource TagColorBrushConverter}}"
+                                Foreground="{x:Bind ColorHex, Converter={StaticResource TagForegroundBrushConverter}}"
+                                BorderBrush="{x:Bind ColorHex, Converter={StaticResource TagColorBrushConverter}}"
+                                Command="{Binding ElementName=TagsList, Path=DataContext.FilterByTagCommand}"
+                                CommandParameter="{Binding}"/>
+
+                        <Button Grid.Column="1"
+                                Content="{Binding ElementName=TagsView, Path=Strings.ChangeColor}"
+                                Command="{Binding ElementName=TagsList, Path=DataContext.ChangeTagColorCommand}"
+                                CommandParameter="{Binding}"
+                                Margin="8,0,0,0"/>
+
+                        <Button Grid.Column="2"
+                                Content="x"
+                                Style="{StaticResource IconButtonStyle}"
+                                Command="{Binding ElementName=TagsList, Path=DataContext.DeleteTagCommand}"
+                                CommandParameter="{Binding}"
+                                Margin="8,0,0,0"/>
+                    </Grid>
+                </DataTemplate>
+            </ListView.ItemTemplate>
+        </ListView>
+    </Grid>
+</UserControl>

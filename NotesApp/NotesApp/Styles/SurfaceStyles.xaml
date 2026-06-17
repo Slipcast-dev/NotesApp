@@ -1,0 +1,154 @@
+<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+    <!--
+        Общие стили поверхностей без blur/acrylic/backdrop.
+        Мы сохраняем мягкие радиусы, плотные отступы и тихие границы,
+        чтобы интерфейс оставался аккуратным и ближе к macOS-подаче.
+    -->
+    <Style x:Key="CardStyle" TargetType="Border">
+        <Setter Property="Background" Value="{ThemeResource CardBackgroundFillColorDefault}"/>
+        <Setter Property="CornerRadius" Value="14"/>
+        <Setter Property="BorderBrush" Value="{ThemeResource CardBorderBrush}"/>
+        <Setter Property="BorderThickness" Value="1"/>
+        <Setter Property="Padding" Value="14"/>
+    </Style>
+
+    <Style x:Key="TagChipButtonStyle" TargetType="Button">
+        <Setter Property="Background" Value="{ThemeResource CardBackgroundFillColorDefault}"/>
+        <Setter Property="Foreground" Value="{ThemeResource TextFillColorPrimary}"/>
+        <Setter Property="CornerRadius" Value="10"/>
+        <Setter Property="Padding" Value="12,7"/>
+        <Setter Property="MinWidth" Value="58"/>
+        <Setter Property="MinHeight" Value="30"/>
+        <Setter Property="BorderThickness" Value="1"/>
+        <Setter Property="BorderBrush" Value="{ThemeResource CardBorderBrush}"/>
+        <Setter Property="FontSize" Value="{ThemeResource AppFontSizeButton}"/>
+        <Setter Property="FontFamily" Value="{ThemeResource AppFontFamily}"/>
+    </Style>
+
+    <Style x:Key="IconButtonStyle" TargetType="Button">
+        <Setter Property="Background" Value="{ThemeResource CardBackgroundFillColorDefault}"/>
+        <Setter Property="Foreground" Value="{ThemeResource TextFillColorPrimary}"/>
+        <Setter Property="CornerRadius" Value="10"/>
+        <Setter Property="Padding" Value="6,3"/>
+        <Setter Property="MinWidth" Value="32"/>
+        <Setter Property="MinHeight" Value="30"/>
+        <Setter Property="BorderThickness" Value="1"/>
+        <Setter Property="BorderBrush" Value="{ThemeResource CardBorderBrush}"/>
+        <Setter Property="FontSize" Value="{ThemeResource AppFontSizeButton}"/>
+        <Setter Property="FontFamily" Value="{ThemeResource AppFontFamily}"/>
+    </Style>
+
+    <Style TargetType="Button">
+        <Setter Property="Background" Value="{ThemeResource CardBackgroundFillColorDefault}"/>
+        <Setter Property="Foreground" Value="{ThemeResource TextFillColorPrimary}"/>
+        <Setter Property="CornerRadius" Value="10"/>
+        <Setter Property="Padding" Value="12,7"/>
+        <Setter Property="BorderThickness" Value="1"/>
+        <Setter Property="BorderBrush" Value="{ThemeResource CardBorderBrush}"/>
+        <Setter Property="FontWeight" Value="Normal"/>
+        <Setter Property="FontSize" Value="{ThemeResource AppFontSizeButton}"/>
+        <Setter Property="FontFamily" Value="{ThemeResource AppFontFamily}"/>
+    </Style>
+
+    <Style x:Key="AccentButtonStyle" TargetType="Button">
+        <Setter Property="Background" Value="{ThemeResource SystemAccentColor}"/>
+        <Setter Property="Foreground" Value="White"/>
+        <Setter Property="BorderBrush" Value="{ThemeResource SystemAccentColor}"/>
+        <Setter Property="FontSize" Value="{ThemeResource AppFontSizeButton}"/>
+        <Setter Property="FontFamily" Value="{ThemeResource AppFontFamily}"/>
+    </Style>
+
+    <Style TargetType="TextBlock">
+        <Setter Property="FontSize" Value="{ThemeResource AppFontSizeBody}"/>
+        <Setter Property="FontFamily" Value="{ThemeResource AppFontFamily}"/>
+        <Setter Property="Foreground" Value="{ThemeResource TextFillColorPrimary}"/>
+    </Style>
+
+    <Style TargetType="TextBox">
+        <Setter Property="CornerRadius" Value="10"/>
+        <Setter Property="Padding" Value="12,9"/>
+        <Setter Property="BorderThickness" Value="1"/>
+        <!--
+            ThemeResource нужен здесь, чтобы XAML не пытался развернуть
+            цвета раньше, чем загрузятся словари темы.
+        -->
+        <Setter Property="BorderBrush" Value="{ThemeResource CardBorderBrush}"/>
+        <Setter Property="Background" Value="{ThemeResource CardBackgroundFillColorDefault}"/>
+        <Setter Property="Foreground" Value="{ThemeResource TextFillColorPrimary}"/>
+        <Setter Property="FontSize" Value="{ThemeResource AppFontSizeInput}"/>
+        <Setter Property="FontFamily" Value="{ThemeResource AppFontFamily}"/>
+    </Style>
+
+    <Style TargetType="ListView">
+        <Setter Property="Background" Value="Transparent"/>
+        <Setter Property="BorderThickness" Value="0"/>
+        <Setter Property="ItemContainerStyle">
+            <Setter.Value>
+                <Style TargetType="ListViewItem">
+                    <Setter Property="CornerRadius" Value="10"/>
+                    <Setter Property="Margin" Value="0,3"/>
+                    <Setter Property="Padding" Value="10"/>
+                    <Setter Property="Background" Value="Transparent"/>
+                </Style>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <Style TargetType="ComboBox">
+        <Setter Property="CornerRadius" Value="10"/>
+        <Setter Property="Padding" Value="12,8"/>
+        <Setter Property="Background" Value="{ThemeResource CardBackgroundFillColorDefault}"/>
+        <Setter Property="BorderThickness" Value="1"/>
+        <Setter Property="BorderBrush" Value="{ThemeResource CardBorderBrush}"/>
+        <Setter Property="FontSize" Value="{ThemeResource AppFontSizeInput}"/>
+        <Setter Property="FontFamily" Value="{ThemeResource AppFontFamily}"/>
+    </Style>
+
+    <Style TargetType="ToggleSwitch">
+        <Setter Property="FontSize" Value="{ThemeResource AppFontSizeBody}"/>
+        <Setter Property="FontFamily" Value="{ThemeResource AppFontFamily}"/>
+    </Style>
+
+    <Style TargetType="Expander">
+        <Setter Property="Background" Value="Transparent"/>
+        <Setter Property="BorderThickness" Value="0"/>
+    </Style>
+
+    <Style x:Key="TitleTextBlockStyle" TargetType="TextBlock">
+        <Setter Property="FontSize" Value="{ThemeResource AppFontSizeTitle}"/>
+        <Setter Property="FontFamily" Value="{ThemeResource AppFontFamily}"/>
+        <Setter Property="FontWeight" Value="SemiBold"/>
+        <Setter Property="Foreground" Value="{ThemeResource TextFillColorPrimary}"/>
+    </Style>
+
+    <Style x:Key="SubtitleTextBlockStyle" TargetType="TextBlock">
+        <Setter Property="FontSize" Value="{ThemeResource AppFontSizeSubtitle}"/>
+        <Setter Property="FontFamily" Value="{ThemeResource AppFontFamily}"/>
+        <Setter Property="Foreground" Value="{ThemeResource TextFillColorPrimary}"/>
+    </Style>
+
+    <Style x:Key="BodyTextBlockStyle" TargetType="TextBlock">
+        <Setter Property="FontSize" Value="{ThemeResource AppFontSizeBody}"/>
+        <Setter Property="FontFamily" Value="{ThemeResource AppFontFamily}"/>
+        <Setter Property="Foreground" Value="{ThemeResource TextFillColorPrimary}"/>
+    </Style>
+
+    <Style x:Key="SmallTextBlockStyle" TargetType="TextBlock">
+        <Setter Property="FontSize" Value="{ThemeResource AppFontSizeSmall}"/>
+        <Setter Property="FontFamily" Value="{ThemeResource AppFontFamily}"/>
+        <Setter Property="Foreground" Value="{ThemeResource TextFillColorSecondary}"/>
+    </Style>
+
+    <Style x:Key="WindowCaptionTextBlockStyle" TargetType="TextBlock">
+        <Setter Property="FontSize" Value="{ThemeResource AppFontSizeWindowCaption}"/>
+        <Setter Property="FontFamily" Value="{ThemeResource AppFontFamily}"/>
+        <Setter Property="FontWeight" Value="SemiBold"/>
+        <Setter Property="Foreground" Value="{ThemeResource TextFillColorSecondary}"/>
+    </Style>
+
+    <Style TargetType="ScrollViewer">
+        <Setter Property="VerticalScrollBarVisibility" Value="Auto"/>
+        <Setter Property="HorizontalScrollBarVisibility" Value="Disabled"/>
+    </Style>
+</ResourceDictionary>

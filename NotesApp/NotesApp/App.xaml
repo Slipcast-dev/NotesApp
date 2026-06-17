@@ -1,0 +1,29 @@
+<Application x:Class="NotesApp.App" xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+    <Application.Resources>
+        <ResourceDictionary>
+            <x:Double x:Key="AppFontSizeBody">14</x:Double>
+            <x:Double x:Key="AppFontSizeSmall">10</x:Double>
+            <x:Double x:Key="AppFontSizeInput">14</x:Double>
+            <x:Double x:Key="AppFontSizeButton">14</x:Double>
+            <x:Double x:Key="AppFontSizeWindowCaption">13</x:Double>
+            <x:Double x:Key="AppFontSizeSubtitle">18</x:Double>
+            <x:Double x:Key="AppFontSizeTitle">24</x:Double>
+            <FontFamily x:Key="AppFontFamily">Segoe UI</FontFamily>
+            <!-- Shared corner radius used by WinUI default control templates. -->
+            <CornerRadius x:Key="ControlCornerRadius">10</CornerRadius>
+            <ResourceDictionary.MergedDictionaries>
+                <!--
+                    WinUI 3 хранит базовые стили контролов и их внутренние
+                    ресурсы в XamlControlsResources. Словарь подключается первым,
+                    чтобы следующие словари приложения могли безопасно
+                    переопределять системные цвета и шаблоны.
+                -->
+                <XamlControlsResources xmlns="using:Microsoft.UI.Xaml.Controls"/>
+                <ResourceDictionary Source="Styles/Converters.xaml"/>
+                <ResourceDictionary Source="Styles/ThemeColors.xaml"/>
+                <ResourceDictionary Source="Styles/SurfaceStyles.xaml"/>
+                <ResourceDictionary Source="Styles/ControlTemplates.xaml"/>
+            </ResourceDictionary.MergedDictionaries>
+        </ResourceDictionary>
+    </Application.Resources>
+</Application>

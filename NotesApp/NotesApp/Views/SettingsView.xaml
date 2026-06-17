@@ -1,0 +1,59 @@
+<UserControl x:Class="NotesApp.Views.SettingsView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+    <Border Style="{StaticResource CardStyle}">
+        <StackPanel Spacing="14">
+            <TextBlock Text="{x:Bind Strings.Settings}" Style="{StaticResource TitleTextBlockStyle}" Margin="0,0,0,2"/>
+
+            <ComboBox Header="{x:Bind Strings.Theme}"
+                      SelectedValuePath="Tag"
+                      SelectedValue="{x:Bind ViewModel.Settings.Theme, Mode=TwoWay}">
+                <ComboBoxItem Content="{x:Bind Strings.Light}" Tag="Light"/>
+                <ComboBoxItem Content="{x:Bind Strings.Dark}" Tag="Dark"/>
+                <ComboBoxItem Content="{x:Bind Strings.System}" Tag="System"/>
+            </ComboBox>
+
+            <Slider Header="{x:Bind Strings.FontSize}"
+                    Value="{x:Bind ViewModel.Settings.FontSize, Mode=TwoWay}"
+                    Minimum="8"
+                    Maximum="24"
+                    StepFrequency="1"/>
+
+            <ComboBox Header="{x:Bind Strings.FontFamily}"
+                      SelectedValuePath="Tag"
+                      SelectedValue="{x:Bind ViewModel.Settings.FontFamily, Mode=TwoWay}">
+                <ComboBoxItem Tag="Segoe UI" Content="Segoe UI"/>
+                <ComboBoxItem Tag="Arial" Content="Arial"/>
+                <ComboBoxItem Tag="Calibri" Content="Calibri"/>
+                <ComboBoxItem Tag="Consolas" Content="Consolas"/>
+                <ComboBoxItem Tag="Cascadia Mono" Content="Cascadia Mono"/>
+                <ComboBoxItem Tag="Times New Roman" Content="Times New Roman"/>
+            </ComboBox>
+
+            <ToggleSwitch Header="{x:Bind Strings.AutoSave}" IsOn="{x:Bind ViewModel.Settings.AutoSave, Mode=TwoWay}"/>
+
+            <ComboBox Header="{x:Bind Strings.DefaultSorting}"
+                      SelectedValuePath="Tag"
+                      SelectedValue="{x:Bind ViewModel.Settings.DefaultSorting, Mode=TwoWay}">
+                <ComboBoxItem Tag="updateddesc" Content="{x:Bind Strings.RecentFirst}"/>
+                <ComboBoxItem Tag="updatedasc" Content="{x:Bind Strings.OldestFirst}"/>
+                <ComboBoxItem Tag="titleasc" Content="{x:Bind Strings.TitleAscending}"/>
+                <ComboBoxItem Tag="titledesc" Content="{x:Bind Strings.TitleDescending}"/>
+                <ComboBoxItem Tag="createddesc" Content="{x:Bind Strings.CreatedNewestFirst}"/>
+                <ComboBoxItem Tag="createdasc" Content="{x:Bind Strings.CreatedOldestFirst}"/>
+            </ComboBox>
+
+            <ComboBox Header="{x:Bind Strings.Language}"
+                      SelectedValuePath="Tag"
+                      SelectedValue="{x:Bind ViewModel.Settings.Language, Mode=TwoWay}">
+                <ComboBoxItem Tag="ru" Content="{x:Bind Strings.Russian}"/>
+                <ComboBoxItem Tag="en" Content="{x:Bind Strings.English}"/>
+            </ComboBox>
+
+            <StackPanel Orientation="Horizontal" Spacing="8" HorizontalAlignment="Right">
+                <Button Content="{x:Bind Strings.ResetToDefault}" Command="{x:Bind ViewModel.ResetToDefaultCommand}"/>
+                <Button Content="{x:Bind Strings.Save}" Command="{x:Bind ViewModel.SaveSettingsCommand}" Style="{StaticResource AccentButtonStyle}"/>
+            </StackPanel>
+        </StackPanel>
+    </Border>
+</UserControl>
