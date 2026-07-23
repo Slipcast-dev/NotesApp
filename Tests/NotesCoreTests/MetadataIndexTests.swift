@@ -42,11 +42,16 @@ final class MetadataIndexTests: XCTestCase {
         XCTAssertEqual(initial.unchanged, 0)
 
         let search = try SearchIndex(vaultURL: root)
-        XCTAssertEqual(try await search.search("\"searchable phrase\"").map(\.path), [alpha])
-        XCTAssertEqual(try await search.search("tag:work property:status=active task:unchecked").map(\.path), [alpha])
-        XCTAssertEqual(try await search.search("path:Folder Beta").map(\.path), [beta])
-        XCTAssertEqual(try await search.search("/Exact searchable/").map(\.path), [alpha])
-        XCTAssertEqual(try await search.search("regex:Exact searchable").map(\.path), [alpha])
+        let phraseResults = try await search.search("\"searchable phrase\"")
+        let filteredResults = try await search.search("tag:work property:status=active task:unchecked")
+        let pathResults = try await search.search("path:Folder Beta")
+        let slashRegexResults = try await search.search("/Exact searchable/")
+        let explicitRegexResults = try await search.search("regex:Exact searchable")
+        XCTAssertEqual(phraseResults.map(\.path), [alpha])
+        XCTAssertEqual(filteredResults.map(\.path), [alpha])
+        XCTAssertEqual(pathResults.map(\.path), [beta])
+        XCTAssertEqual(slashRegexResults.map(\.path), [alpha])
+        XCTAssertEqual(explicitRegexResults.map(\.path), [alpha])
 
         let outgoing = try await metadata.outgoingLinks(from: alpha)
         XCTAssertEqual(outgoing.first?.destination, "Folder/Beta")
@@ -54,14 +59,16 @@ final class MetadataIndexTests: XCTestCase {
         let backlinks = try await metadata.backlinks(to: ["Folder/Beta"])
         XCTAssertEqual(backlinks.map(\.sourcePath), [alpha])
         XCTAssertTrue(backlinks.first?.context.contains("[[Folder/Beta") == true)
-        XCTAssertEqual(try await metadata.headings(in: beta).first?.blockID, "section")
+        let betaHeadings = try await metadata.headings(in: beta)
+        XCTAssertEqual(betaHeadings.first?.blockID, "section")
 
         let opened = try files.readNote(at: beta)
         _ = try files.writeNote(at: beta, markdown: opened.markdown + "\nnew token", expectedRevision: opened.revision)
         let incremental = try await metadata.synchronize()
         XCTAssertEqual(incremental.indexed, 1)
         XCTAssertEqual(incremental.unchanged, 1)
-        XCTAssertEqual(try await search.search("\"new token\"").map(\.path), [beta])
+        let updatedResults = try await search.search("\"new token\"")
+        XCTAssertEqual(updatedResults.map(\.path), [beta])
     }
 
     func testDeletedOrCorruptIndexRebuildsFromMarkdown() async throws {
@@ -75,14 +82,16 @@ final class MetadataIndexTests: XCTestCase {
         let database = root.appendingPathComponent(".notesapp/index.sqlite")
         try FileManager.default.removeItem(at: database)
         var rebuilt: MetadataIndex? = try MetadataIndex(vaultURL: root)
-        XCTAssertEqual(try await rebuilt?.synchronize().indexed, 1)
+        let rebuiltResult = try await rebuilt?.synchronize()
+        XCTAssertEqual(rebuiltResult?.indexed, 1)
         rebuilt = nil
 
         // A corrupt cache is quarantined; Markdown remains untouched and is re-indexed.
         try? FileManager.default.removeItem(at: database)
         try Data("not sqlite".utf8).write(to: database)
         let recovered = try MetadataIndex(vaultURL: root)
-        XCTAssertEqual(try await recovered.synchronize().indexed, 1)
+        let recoveredResult = try await recovered.synchronize()
+        XCTAssertEqual(recoveredResult.indexed, 1)
         XCTAssertEqual(try files.readNote(at: try NotePath("Recover.md")).markdown, "recoverable body")
     }
 
