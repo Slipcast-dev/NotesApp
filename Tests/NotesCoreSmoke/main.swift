@@ -38,6 +38,17 @@ let rebuilt = try service.rebuildFileManifest()
 try require(rebuilt.notes.count == 1, "File manifest was not rebuilt")
 try require(FileManager.default.fileExists(atPath: service.fileManifestURL.path), "Manifest file missing")
 
+let bookmarkRegistryRoot = FileManager.default.temporaryDirectory
+    .appendingPathComponent("NotesAppBookmarks-\(UUID().uuidString)", isDirectory: true)
+try FileManager.default.createDirectory(at: bookmarkRegistryRoot, withIntermediateDirectories: false)
+defer { try? FileManager.default.removeItem(at: bookmarkRegistryRoot) }
+let bookmarkRegistry = SecurityScopedBookmarkStore(applicationSupportDirectory: bookmarkRegistryRoot)
+try bookmarkRegistry.save(root)
+try require(
+    bookmarkRegistry.restoreLast()?.standardizedFileURL == root.standardizedFileURL,
+    "Vault bookmark registry was not decoded after saving"
+)
+
 let duplicate = try service.duplicate(path)
 let duplicateNote = try service.readNote(at: duplicate)
 try require(duplicateNote.markdown == "external edit", "Duplicate content mismatch")

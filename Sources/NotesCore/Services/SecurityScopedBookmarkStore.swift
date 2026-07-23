@@ -52,7 +52,7 @@ public final class SecurityScopedBookmarkStore {
 
     public func restoreLast() -> URL? {
         for recent in loadRegistry().recentVaults {
-            if let resolved = resolve(recent), FileManager.default.fileExists(atPath: resolved.path) {
+            if let resolved = resolve(recent), fileManager.fileExists(atPath: resolved.path) {
                 return resolved
             }
         }
@@ -80,11 +80,12 @@ public final class SecurityScopedBookmarkStore {
     }
 
     private func loadRegistry() -> Registry {
-        guard let data = try? Data(contentsOf: registryURL),
-              let registry = try? JSONDecoder().decode(Registry.self, from: data) else {
+        guard let data = try? Data(contentsOf: registryURL) else {
             return Registry()
         }
-        return registry
+        let decoder = JSONDecoder()
+        decoder.dateDecodingStrategy = .iso8601
+        return (try? decoder.decode(Registry.self, from: data)) ?? Registry()
     }
 
     private func writeRegistry(_ registry: Registry) throws {
