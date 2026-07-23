@@ -22,9 +22,10 @@ What should happen instead?
 
 ## Environment
 
-- Windows version:
+- Platform: macOS / Windows
+- OS version:
 - NotesApp version or commit:
-- Portable or local build:
+- Release archive or local build:
 
 ## Additional context
 
