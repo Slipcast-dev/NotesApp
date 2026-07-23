@@ -9,7 +9,7 @@ on:
       - main
 
 jobs:
-  build:
+  windows:
     name: Build Windows app
     runs-on: windows-latest
 
@@ -27,3 +27,17 @@ jobs:
 
       - name: Build
         run: dotnet build NotesApp\NotesApp\NotesApp.csproj -c Debug -r win-x64 --no-restore
+
+  macos:
+    name: Build and test macOS app
+    runs-on: macos-15
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Test Swift package
+        run: swift test
+
+      - name: Build app bundle
+        run: ./script/build_and_run.sh --bundle

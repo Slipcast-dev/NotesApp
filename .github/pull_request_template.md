@@ -5,6 +5,8 @@
 ## Validation
 
 - [ ] `dotnet build NotesApp\NotesApp\NotesApp.csproj -c Debug -r win-x64`
+- [ ] `swift test`
+- [ ] `./script/build_and_run.sh --bundle`
 
 ## Notes
 

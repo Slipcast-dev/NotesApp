@@ -1,66 +1,140 @@
 # NotesApp
 
 <p align="center">
-  <img src="NotesApp/NotesApp/Assets/NotebookPurple.png" alt="NotesApp icon" width="96" height="96">
+  <img src="docs/assets/notesapp-hero.svg" alt="Анимированный интерфейс NotesApp" width="100%">
 </p>
 
-![Platform](https://img.shields.io/badge/platform-Windows-2563eb)
-![.NET](https://img.shields.io/badge/.NET-8.0-512bd4)
-![UI](https://img.shields.io/badge/UI-WinUI%203-7c3aed)
-![Storage](https://img.shields.io/badge/storage-SQLite-0f766e)
+![Status](https://img.shields.io/badge/status-beta%20%2F%20in%20development-f59e0b)
+![macOS](https://img.shields.io/badge/macOS-13%20Ventura%2B-7c3aed)
+![Swift](https://img.shields.io/badge/Swift-5.8-f05138)
+![Windows](https://img.shields.io/badge/Windows-10%2B-2563eb)
+![Storage](https://img.shields.io/badge/storage-file--first%20Markdown-0f766e)
 ![Build](https://github.com/Slipcast-dev/NotesApp/actions/workflows/build.yml/badge.svg)
 
-Простой настольный заметник для Windows: создать заметку, быстро отредактировать текст, разложить записи по тегам и хранить все локально без облака и лишней сложности.
+Локальный file-first Markdown-заметник. Репозиторий содержит сохранённую исходную Windows-версию и нативное приложение для macOS Ventura.
 
-## Что умеет
+> [!IMPORTANT]
+> **Приложение находится в активной разработке. Все доступные сборки — черновые beta-версии:** функции могут меняться, а перед использованием важных vault рекомендуется делать резервную копию.
 
-- Локальное хранение заметок в SQLite.
-- Отдельные файлы заметок рядом с базой для переносимого хранения.
-- Богатое форматирование текста в редакторе: жирный, курсив, шрифт, размер, заголовки, таблицы и чек-листы.
-- Теги с цветами для навигации по заметкам.
-- Поиск, сортировка и корзина удаленных заметок.
-- Внутренние ссылки между заметками в формате `[[Название заметки]]`.
-- Светлая, темная и системная тема.
-- Portable-сборка: приложение можно запускать из папки без установки.
+## Скачать beta
 
-## Технологии
+- [macOS — Apple Silicon (M1 и новее)](https://github.com/Slipcast-dev/NotesApp/releases/download/v2.0.0-beta.1/NotesApp-v2.0.0-beta.1-macOS-arm64.zip)
+- [macOS — Intel](https://github.com/Slipcast-dev/NotesApp/releases/download/v2.0.0-beta.1/NotesApp-v2.0.0-beta.1-macOS-x86_64.zip)
+- [Windows — x64 portable](https://github.com/Slipcast-dev/NotesApp/releases/download/v2.0.0-beta.1/NotesApp-v2.0.0-beta.1-win-x64-portable.zip)
 
-- C# и .NET 8.
-- WinUI 3 / Windows App SDK.
-- Entity Framework Core + SQLite.
-- CommunityToolkit.Mvvm.
-- JSON-настройки и MVVM-архитектура.
+Все релизы публикуются с отметкой **Pre-release** до выхода стабильной версии.
 
-## Структура
+## Возможности
 
-```text
-NotesApp-3.0/
-├─ NotesApp/
-│  ├─ NotesApp.sln
-│  └─ NotesApp/
-│     ├─ Assets/          # иконка приложения
-│     ├─ Converters/      # XAML-конвертеры
-│     ├─ Data/            # EF Core и инициализация базы
-│     ├─ Infrastructure/  # пути, markdown-файлы, служебные helpers
-│     ├─ Localization/    # русская и английская локализация
-│     ├─ Models/          # модели данных
-│     ├─ Services/        # работа с БД, настройками и диалогами
-│     ├─ Styles/          # темы и общие стили
-│     ├─ ViewModels/      # MVVM-логика экранов
-│     └─ Views/           # WinUI-экраны
-├─ Tools/                 # публикация и запуск portable-версии
-└─ Run.cmd                # сборка и запуск portable-версии
+- обычная папка-vault и UTF-8 `.md` как единственный источник истины;
+- открытие существующих Obsidian vault без конвертации;
+- дерево папок, Unicode-пути, create/rename/move/duplicate, drag-and-drop, Finder и системная корзина;
+- атомарное автосохранение, рекурсивное наблюдение внешних изменений и явное разрешение конфликтов;
+- Source, настоящий визуальный Preview и Reading режимы без RTF в Markdown;
+- визуальный редактор Markdown-таблиц: ячейки, шапка, вставка/удаление/перестановка строк и столбцов, выравнивание и клавиатурная навигация;
+- интерактивные задачи в Reading: клик по флажку сразу и обратимо меняет `[ ]`/`[x]` в исходном `.md`, включая пустые и вложенные пункты;
+- CommonMark/GFM-совместимый AST: tables/tasks/callouts/footnotes, YAML, wikilinks/embeds, block/heading links, math и Mermaid blocks;
+- перестраиваемый SQLite FTS5-кэш с phrase/boolean/regex и `path:`, `file:`, `tag:`, `property:`, `task:`, `line:`, `block:` фильтрами;
+- outline, outgoing links и backlinks с контекстом;
+- вложения через выбор файла, drag-and-drop и paste из clipboard; настраиваемые папки и проверка missing/unused;
+- безопасная dry-run миграция legacy SQLite/RTF с backup, YAML metadata, отчётом, идемпотентностью и undo;
+- светлая, тёмная и системная тема;
+- русский и английский интерфейс;
+- security-scoped bookmark последнего vault.
+
+## Нативный порт для macOS
+
+macOS-приложение находится в `Sources/` и построено на SwiftUI с узким AppKit-мостом для системных панелей и plain-text `NSTextView`. Старый rich-text код сохранён только как legacy-вход для миграции и не подключён к новой точке входа.
+
+Интерфейс адаптирован под macOS:
+
+- трёхколоночная навигация: файловое дерево, результаты/список заметок и редактор;
+- отдельное системное окно настроек;
+- меню приложения и сочетания клавиш `⌘N`, `⌘S`, `⌘⇧N`, `⌘⇧O`, `⌘⌫`;
+- нативные боковая панель, toolbar, контекстные меню и системные диалоги.
+
+Минимальная версия — macOS 13 Ventura. В `Package.swift` нет сетевых зависимостей; используется системная библиотека SQLite.
+
+### Сборка и запуск
+
+Из корня проекта:
+
+```bash
+./script/build_and_run.sh
 ```
 
-## Требования
+Проверка запуска:
 
-- Windows 10 1809 или новее.
-- .NET SDK 8.0 для сборки из исходников.
-- Visual Studio 2022 с Windows App SDK workload или совместимая CLI-среда.
+```bash
+./script/build_and_run.sh --verify
+```
 
-## Сборка
+Готовое приложение создаётся в:
 
-Проверочная сборка:
+```text
+dist/NotesApp.app
+```
+
+Рекомендуется Xcode 14.3 или новее. Скрипт также содержит резервный путь сборки для установок Ventura только с Command Line Tools, у которых SwiftPM не может определить `PlatformPath`.
+
+Дополнительные режимы:
+
+```bash
+./script/build_and_run.sh --debug
+./script/build_and_run.sh --logs
+./script/build_and_run.sh --telemetry
+./script/build_and_run.sh --package
+```
+
+В Codex настроена кнопка **Run**, использующая тот же скрипт.
+
+### Vault и перенос старых данных
+
+По умолчанию создаётся отдельный Markdown vault:
+
+```text
+~/Library/Application Support/NotesApp/Vault
+```
+
+Любую другую папку можно открыть как vault. `.notesapp` содержит только удаляемые настройки/manifest/индекс; удаление `index.sqlite` не затрагивает заметки и индекс будет построен заново.
+
+Для переноса Windows/macOS legacy-хранилища откройте **Settings → Migration** и выберите папку, содержащую:
+
+```text
+notes.db
+settings.json
+note-000001.md (если создавался старой версией)
+...
+```
+
+Исходная папка и target vault должны различаться. Сервис открывает базу read-only, сам создаёт согласованную резервную копию и никогда не удаляет исходные данные. Сначала доступен dry-run.
+
+### Тесты
+
+При установленном полном Xcode:
+
+```bash
+swift test
+```
+
+В текущем окружении только с Ventura Command Line Tools:
+
+```bash
+./script/test_with_command_line_tools.sh
+```
+
+Наборы проверяют file-first CRUD/atomic conflicts/Unicode, RTF migration, Markdown AST/render/round-trip, интерактивные таблицы и задачи, FTS/index/backlinks/search и attachments. Полный список этапов и фактических проверок находится в [`IMPLEMENTATION_PLAN.md`](IMPLEMENTATION_PLAN.md).
+
+## Исходная Windows-версия
+
+Windows-приложение сохранено в `NotesApp/NotesApp/` без удаления исходного кода.
+
+- C# и .NET 8;
+- WinUI 3 / Windows App SDK;
+- Entity Framework Core + SQLite;
+- CommunityToolkit.Mvvm.
+
+Проверочная сборка Windows:
 
 ```powershell
 dotnet build NotesApp\NotesApp\NotesApp.csproj -c Debug -r win-x64
@@ -72,42 +146,21 @@ Portable-публикация:
 powershell -ExecutionPolicy Bypass -File Tools\PublishPortable.ps1
 ```
 
-Готовая папка появится в:
+## Структура
 
 ```text
-dist\portable\win-x64
+NotesApp/
+├─ Package.swift                  # SwiftPM, macOS 13+
+├─ Sources/
+│  ├─ NotesApp/                   # SwiftUI-приложение, views и store
+│  ├─ NotesCore/                  # vault, AST, migration, rebuildable index, links, attachments
+│  └─ CSQLite/                    # системный модуль SQLite
+├─ Tests/                         # XCTest и исполняемые offline smoke-наборы
+├─ script/                        # сборка и запуск macOS
+├─ NotesApp/NotesApp/             # исходная Windows-версия
+└─ Tools/                         # Windows portable-скрипты
 ```
-
-Архив portable-версии появится в:
-
-```text
-dist\portable\NotesApp-win-x64-portable.zip
-```
-
-## Запуск
-
-Из корня проекта:
-
-```powershell
-.\Run.cmd
-```
-
-Или после публикации:
-
-```powershell
-.\dist\portable\win-x64\Run.cmd
-```
-
-## Данные
-
-В portable-режиме пользовательские данные хранятся рядом с приложением в папке `Data`:
-
-- `notes.db` - локальная SQLite-база.
-- `settings.json` - настройки приложения.
-- `storage-location.json` - выбранное хранилище.
-
-Папка `Data` не попадает в репозиторий и релизный архив, чтобы не публиковать личные заметки.
 
 ## Лицензия
 
-Проект распространяется под лицензией MIT. Подробности в [LICENSE](LICENSE).
+Проект распространяется по лицензии MIT. Подробности в [LICENSE](LICENSE).
